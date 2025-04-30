@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            background-color: aqua;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+         #form{
+            background: rgba(231, 38, 38, 0.845);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 100%;
+        
+ }
+ input{
+    width:calc(100%-20px);
+    padding:10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+ }
+ button{
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    background: blue;
+    color: aliceblue;
+    font-size: 1rem;
+    
+ }
+#result{
+    margin-top: 2rem;
+   background: violet;
+   padding: 1.5rem;
+   border-radius: 10px;
+   max-width: 500px;
+width: 90%;
+box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+
+}
+#result h1,#result h3{
+    color: #fff;
+}
+@media(max-width:768px){
+    h1{
+        font-size: 2rem;
+    }
+    button,input{
+        font-size: 0.9rem;
+    }
+}
+    </style>
+</head>
+<body>
+    
+    <div id="form">
+        <input type="text" id="enter" placeholder="enter the city" />
+        <button type="submit" id="enter2">Search</button>
+    </div>
+    <div id="result">
+    </div>
+    
+    <script>
+        async function weatherReport(event) {
+event.preventDefault();
+
+  const input = document?.getElementById("enter");
+  const result = document?.getElementById("result");
+  const inputText = input?.value?.trim();
+  result.innerHTML = "";
+
+  if (!inputText) {
+    result.innerHTML = `<h3 style="color:red;">Please enter a valid city name</h3>`;
+    return;
+  }
+
+  const apiKey = `c4f86ece00bc8aa272652ac9065af12d`;
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${inputText}&appid=${apiKey}&units=metric`;
+
+  try {
+    const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error(`City not found (${response.status})`);
+    }
+
+    const data = await response.json();
+
+    result.innerHTML = `
+      <h1>${data?.name}, ${data?.sys?.country}</h1> 
+      <img src="https://openweathermap.org/img/wn/${data?.weather?.[0]?.icon}@2x.png" alt="${data?.weather?.[0]?.description}" />
+      <h3>Temperature: ${data?.main?.temp}°C</h3>
+      <h3>Weather: ${data?.weather?.[0]?.description}</h3>
+      <h3>Humidity: ${data?.main?.humidity}%</h3>
+      <h3>Wind Speed: ${data?.wind?.speed} m/s</h3>
+    `;
+
+    input.value = "";
+  } catch (error) {
+    result.innerHTML = `<h3 style="color:red;">${error.message}</h3>`;
+  }
+}
+
+document?.getElementById("enter2")?.addEventListener("click", weatherReport);
+
+   </script>
+</body>
+</html>
